@@ -11,6 +11,7 @@ import cors from "cors";
 import { existsUser } from "./middleware/existsUser.js";
 import { verifyEmail } from "./middleware/verifyEmail.js";
 import {loginUser} from "./controllers/authController";
+import userRoutes from "./routes/user";
 
 const app = express()
 
@@ -19,6 +20,8 @@ const port = 4000
 app.use(cors())
 
 app.use(express.json())
+
+app.use('/api/users', userRoutes)
 
 app.get('/', (req: Request, res: Response) => {
     res.json({mssg: 'Welcome to the app'})

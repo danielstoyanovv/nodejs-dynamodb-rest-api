@@ -5,19 +5,17 @@ import {
     Response, 
     NextFunction } from "express";
 import { 
-    DynamoDBClient, 
-    GetItemCommand } from "@aws-sdk/client-dynamodb";
-import { 
-    DynamoDBDocumentClient, 
+     GetItemCommand } from "@aws-sdk/client-dynamodb";
+import {  
     ScanCommand  } from "@aws-sdk/lib-dynamodb";
 import { STATUS_ERROR } from "../config/data"
 import {config} from "dotenv"
+import { DynamoDBConnect } from "../config/DynamoDBConnect";
+
 config()
 
-const client = new DynamoDBClient({
-    region: "eu-west-3"
-});
-const docClient = DynamoDBDocumentClient.from(client);
+const dynamoDBConnect = new DynamoDBConnect()
+const docClient = dynamoDBConnect.getDocumentClient
 const TABLE_NAME = process.env.USERS_TABLE_NAME
 
 export const verifyEmail = async (req: Request, res: Response, next: NextFunction) => {
@@ -33,7 +31,7 @@ export const verifyEmail = async (req: Request, res: Response, next: NextFunctio
         },
       });
     
-    const user = await client.send(command);
+    const user = await docClient.send(command);
     if (user && user.Item) {
         if (user.Item.email.S !== email) {      
             const command = new ScanCommand({
@@ -43,7 +41,7 @@ export const verifyEmail = async (req: Request, res: Response, next: NextFunctio
                     ":e": email
                 }
             });
-            const existsUsers = await client.send(command)
+            const existsUsers = await docClient.send(command)
             if (existsUsers.Count !== 0) {
                 return res.status(400).json({
                     status: STATUS_ERROR, 

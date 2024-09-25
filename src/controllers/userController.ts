@@ -7,24 +7,19 @@ import {
     STATUS_ERROR, 
     INTERNAL_SERVER_ERROR } from "../config/data"
 import { 
-    DynamoDBClient, 
     PutItemCommand, 
     GetItemCommand, 
     DeleteItemCommand, 
     UpdateItemCommand } from "@aws-sdk/client-dynamodb";
 import { 
-    DynamoDBDocumentClient, 
     ScanCommand  } from "@aws-sdk/lib-dynamodb";
-import { 
-    marshall, 
-    unmarshall } from "@aws-sdk/util-dynamodb";
+import { DynamoDBConnect } from "../config/DynamoDBConnect";
 const uuid = require('uuid');
 import {config} from "dotenv"
 config()
-const client = new DynamoDBClient({
-    region: "eu-west-3"
-});
-const docClient = DynamoDBDocumentClient.from(client)
+
+const dynamoDBConnect = new DynamoDBConnect()
+const docClient = dynamoDBConnect.getDocumentClient
 const TABLE_NAME = process.env.USERS_TABLE_NAME
 
 export const getUsers = async ( req: Request,  res: Response) => {
@@ -67,7 +62,7 @@ export const createUser = async ( req: Request,  res: Response) => {
 
             }
         });
-        const response = await client.send(command);
+        const response = await docClient.send(command);
         if (response) {
             const command = new GetItemCommand({
                 TableName: TABLE_NAME,
@@ -131,7 +126,7 @@ export const deleteUser = async (req: Request, res: Response) => {
               id: { S: id },
             },
           });
-          const response = await client.send(command);
+          const response = await docClient.send(command);
         res.status(200).json({
             status: STATUS_SUCCESS,
             data: response,
@@ -152,13 +147,14 @@ export const updateUser = async (req: Request, res: Response) => {
         const { id } = req.params
         const password = await bcrypt.hash(req.body.password, 10);
         const { email, role } = req.body;
-        const objKeys = Object.keys(req.body)
-        const command = new UpdateItemCommand({
-            TableName: TABLE_NAME,
-            // For more information about data types,
-            // see https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.NamingRulesDataTypes.html#HowItWorks.DataTypes and
-            // https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Programming.LowLevelAPI.html#Programming.LowLevelAPI.DataTypeDescriptors
-            Key: marshall({id: id}) 
+        // const { ...data } = req.body
+        // data.password =
+
+        // console.log(data)
+        
+        // const command = new UpdateItemCommand({
+            // TableName: TABLE_NAME,
+            // Key: marshall({id: id}) 
                 // id: { S: id },
                 // email: { S: email},
                 // password:  { S: password },
@@ -169,11 +165,11 @@ export const updateUser = async (req: Request, res: Response) => {
             //   ":chunks": { BOOL: "false" },
             // },
             // ReturnValues: "ALL_NEW",
-          });
-        const response = await client.send(command);
+        //   });
+        // const response = await docClient.send(command);
         res.status(200).json({
             status: STATUS_SUCCESS, 
-            data: response,
+            data: 2,
             message: ""
         })
     } catch (error) {

@@ -6,17 +6,15 @@ import {
     STATUS_SUCCESS, 
     STATUS_ERROR, 
     INTERNAL_SERVER_ERROR } from "../config/data"
-import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { 
-    DynamoDBDocumentClient, 
     ScanCommand  } from "@aws-sdk/lib-dynamodb";
+
+import { DynamoDBConnect } from "../config/DynamoDBConnect";
 import {config} from "dotenv"
 config()
 
-const client = new DynamoDBClient({
-    region: "eu-west-3"
-});
-const docClient = DynamoDBDocumentClient.from(client)
+const dynamoDBConnect = new DynamoDBConnect()
+const docClient = dynamoDBConnect.getDocumentClient
 const TABLE_NAME = process.env.USERS_TABLE_NAME
 
 export const loginUser = async ( req: Request,  res: Response) => {
@@ -30,7 +28,7 @@ export const loginUser = async ( req: Request,  res: Response) => {
                 ":e": email
             }
         });
-        const users = await client.send(command)
+        const users = await docClient.send(command)
         if (users.Count === 0) {
             return res.status(401).json({ 
                 status: STATUS_ERROR, 

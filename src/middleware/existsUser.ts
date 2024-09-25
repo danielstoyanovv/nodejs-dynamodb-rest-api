@@ -1,21 +1,18 @@
 "use strict";
 
 import { STATUS_ERROR } from "../config/data"
-import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { 
-    DynamoDBDocumentClient, 
-    ScanCommand  } from "@aws-sdk/lib-dynamodb";
+     ScanCommand  } from "@aws-sdk/lib-dynamodb";
 import {
     Request, 
     Response, 
     NextFunction } from "express";
 import {config} from "dotenv"
+import { DynamoDBConnect } from "../config/DynamoDBConnect";
 config()
 
-const client = new DynamoDBClient({
-    region: "eu-west-3"
-});
-const docClient = DynamoDBDocumentClient.from(client);
+const dynamoDBConnect = new DynamoDBConnect()
+const docClient = dynamoDBConnect.getDocumentClient
 const TABLE_NAME = process.env.USERS_TABLE_NAME
 
 export async function existsUser(req: Request, res: Response, next: NextFunction) {
@@ -28,7 +25,7 @@ export async function existsUser(req: Request, res: Response, next: NextFunction
                 ":e": email
             }
         });
-        const existsUser = await client.send(command) 
+        const existsUser = await docClient.send(command) 
         if (existsUser.Count !== 0) {
             return res.status(400).json({
                 status: STATUS_ERROR, 
