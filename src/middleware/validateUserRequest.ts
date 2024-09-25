@@ -1,4 +1,9 @@
-import {Request, Response, NextFunction } from "express";
+"use strict";
+
+import {
+    Request, 
+    Response, 
+    NextFunction } from "express";
 import emailValidator from "email-validator";
 import { STATUS_ERROR } from "../config/data"
 

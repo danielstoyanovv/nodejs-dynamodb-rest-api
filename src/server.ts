@@ -37,7 +37,6 @@ app.delete('/api/users/:id', VerifyToken, deleteUser)
 
 app.post('/api/login', validateUserRequest, loginUser)
 
-
 app.listen(port, () => {
     console.log('listening on port', port)
 })

@@ -1,4 +1,9 @@
-import {Request, Response, NextFunction } from "express";
+"use strict";
+
+import {
+    Request, 
+    Response, 
+    NextFunction } from "express";
 import {config} from "dotenv"
 config()
 import { STATUS_ERROR } from "../config/data"
@@ -37,7 +42,7 @@ export const VerifyToken = (req: Request, res: Response, next: NextFunction) => 
                 });
             }
         } catch(error) {
-            console.log(error)    
+            console.error(error)    
         }
     }
     next();

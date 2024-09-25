@@ -76,12 +76,6 @@ export const createUser = async ( req: Request,  res: Response) => {
                 },
               });
             const response = await docClient.send(command);
-            if (response.Item) {
-                console.log(response.Item.id)
-                console.log(response.Item.id.S)
-             
-                console.log(typeof response.Item.id)
-            }
             res.status(201).json({ 
                 status: STATUS_SUCCESS, 
                 data: response,
@@ -90,7 +84,7 @@ export const createUser = async ( req: Request,  res: Response) => {
             
         }
     } catch (error) {
-        console.log(error)
+        console.error(error)
         res.status(500).json({ 
             status: STATUS_ERROR, 
             data: [],

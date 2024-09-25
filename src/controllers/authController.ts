@@ -2,9 +2,14 @@
 
 import { Request, Response } from "express"
 import jwt from 'jsonwebtoken'
-import { STATUS_SUCCESS, STATUS_ERROR, INTERNAL_SERVER_ERROR } from "../config/data"
+import { 
+    STATUS_SUCCESS, 
+    STATUS_ERROR, 
+    INTERNAL_SERVER_ERROR } from "../config/data"
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
-import { DynamoDBDocumentClient, ScanCommand  } from "@aws-sdk/lib-dynamodb";
+import { 
+    DynamoDBDocumentClient, 
+    ScanCommand  } from "@aws-sdk/lib-dynamodb";
 import {config} from "dotenv"
 config()
 
@@ -18,7 +23,6 @@ export const loginUser = async ( req: Request,  res: Response) => {
     const { email, password, role } = req.body;
     const INVALID_EMAIL_PASSWORD = "Invalid email or password";
     try {
-        // result.data.Item.id.S,
         const command = new ScanCommand({
             TableName: TABLE_NAME,
             FilterExpression: "email = :e",
@@ -27,8 +31,6 @@ export const loginUser = async ( req: Request,  res: Response) => {
             }
         });
         const users = await client.send(command)
-        console.log(users.Count)
-
         if (users.Count === 0) {
             return res.status(401).json({ 
                 status: STATUS_ERROR, 
@@ -39,7 +41,6 @@ export const loginUser = async ( req: Request,  res: Response) => {
         if (users.Items) {
             const bcrypt = require("bcrypt")
             users.Items.forEach(async function (user) {
-                console.log(user)
                 const result = await bcrypt.compare(password, user.password);         
                 if (!result) {
                     return res.status(401).json({ 
@@ -73,7 +74,7 @@ export const loginUser = async ( req: Request,  res: Response) => {
             });            
         }
     } catch (error) {
-        console.log(error)
+        console.error(error)
         res.status(500).json({ 
             status: STATUS_ERROR, 
             data: [],

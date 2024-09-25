@@ -1,6 +1,15 @@
-import {Request, Response, NextFunction } from "express";
-import { DynamoDBClient, GetItemCommand } from "@aws-sdk/client-dynamodb";
-import { DynamoDBDocumentClient, ScanCommand  } from "@aws-sdk/lib-dynamodb";
+"use strict";
+
+import {
+    Request, 
+    Response, 
+    NextFunction } from "express";
+import { 
+    DynamoDBClient, 
+    GetItemCommand } from "@aws-sdk/client-dynamodb";
+import { 
+    DynamoDBDocumentClient, 
+    ScanCommand  } from "@aws-sdk/lib-dynamodb";
 import { STATUS_ERROR } from "../config/data"
 import {config} from "dotenv"
 config()
@@ -26,7 +35,7 @@ export const verifyEmail = async (req: Request, res: Response, next: NextFunctio
     
     const user = await client.send(command);
     if (user && user.Item) {
-        if (user.Item.email !== email) {      
+        if (user.Item.email.S !== email) {      
             const command = new ScanCommand({
                 TableName: TABLE_NAME,
                 FilterExpression: "email = :e",
