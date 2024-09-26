@@ -15,7 +15,7 @@ config()
 
 const dynamoDBConnect = new DynamoDBConnect()
 const docClient = dynamoDBConnect.getDocumentClient
-const TABLE_NAME = process.env.USERS_TABLE_NAME
+const TABLE_NAME = process.env.DYNAMODB_USERS_TABLE_NAME
 
 export const loginUser = async ( req: Request,  res: Response) => {
     const { email, password, role } = req.body;

@@ -15,12 +15,15 @@ import {
     ScanCommand  } from "@aws-sdk/lib-dynamodb";
 import { DynamoDBConnect } from "../config/DynamoDBConnect";
 const uuid = require('uuid');
+import { 
+    marshall, 
+    unmarshall } from "@aws-sdk/util-dynamodb";
 import {config} from "dotenv"
 config()
 
 const dynamoDBConnect = new DynamoDBConnect()
 const docClient = dynamoDBConnect.getDocumentClient
-const TABLE_NAME = process.env.USERS_TABLE_NAME
+const TABLE_NAME = process.env.DYNAMODB_USERS_TABLE_NAME
 
 export const getUsers = async ( req: Request,  res: Response) => {
     try { 
@@ -58,8 +61,7 @@ export const createUser = async ( req: Request,  res: Response) => {
                 id: { S: id },
                 email: { S: email},
                 password:  { S: password },
-                role: { S: role },
-
+                role: { S: role }
             }
         });
         const response = await docClient.send(command);
