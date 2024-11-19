@@ -1,7 +1,7 @@
 "use strict";
 
 import { Request, Response } from "express"
-import jwt from 'jsonwebtoken'
+import { TokenService } from "../config/TokenService"
 import { 
     STATUS_SUCCESS, 
     STATUS_ERROR, 
@@ -54,13 +54,11 @@ export const loginUser = async ( req: Request,  res: Response) => {
                         message: "Invalid role" 
                     });
                 }
-                const token = jwt.sign({
-                    id: user._id,
-                    email: email,
-                    role: role
-                }, process.env.JWT_SECRET!, {
-                    expiresIn: 180
-                });
+                const token = new TokenService()
+                    .setUserId(user._id)
+                    .setUserEmail(email)
+                    .setUserRole(role)
+                    .getToken
                 const data = {
                     token: token
                 }
