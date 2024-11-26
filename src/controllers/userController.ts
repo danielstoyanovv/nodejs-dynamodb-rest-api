@@ -13,7 +13,7 @@ import {
     UpdateItemCommand } from "@aws-sdk/client-dynamodb";
 import { 
     ScanCommand  } from "@aws-sdk/lib-dynamodb";
-import { DynamoDBConnect } from "../config/DynamoDBConnect";
+import { ConnectToDatabase } from "../config/ConnectToDatabase";
 const uuid = require('uuid');
 import { 
     marshall, 
@@ -21,7 +21,7 @@ import {
 import {config} from "dotenv"
 config()
 
-const dynamoDBConnect = new DynamoDBConnect()
+const dynamoDBConnect = new ConnectToDatabase()
 const docClient = dynamoDBConnect.getDocumentClient
 const TABLE_NAME = process.env.DYNAMODB_USERS_TABLE_NAME
 

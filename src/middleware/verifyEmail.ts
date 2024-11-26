@@ -10,11 +10,11 @@ import {
     ScanCommand  } from "@aws-sdk/lib-dynamodb";
 import { STATUS_ERROR } from "../constants/data"
 import {config} from "dotenv"
-import { DynamoDBConnect } from "../config/DynamoDBConnect";
+import { ConnectToDatabase } from "../config/ConnectToDatabase";
 
 config()
 
-const dynamoDBConnect = new DynamoDBConnect()
+const dynamoDBConnect = new ConnectToDatabase()
 const docClient = dynamoDBConnect.getDocumentClient
 const TABLE_NAME = process.env.DYNAMODB_USERS_TABLE_NAME
 

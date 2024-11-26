@@ -12,7 +12,7 @@ import {
 
 const region = process.env.DYNAMODB_DEFAULT_REGION || "eu-west-3"
 
-export class DynamoDBConnect {
+export class ConnectToDatabase {
     get getDocumentClient() {
         const client = new DynamoDBClient({
             region: region
