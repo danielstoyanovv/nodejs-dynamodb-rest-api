@@ -5,7 +5,7 @@ import {
     Response, 
     NextFunction } from "express";
 import emailValidator from "email-validator";
-import { STATUS_ERROR } from "../config/data"
+import { STATUS_ERROR } from "../constants/data"
 
 export const validateUserRequest = async (req: Request, res: Response, next: NextFunction) => {
     const ROLES = ['admin', 'user']

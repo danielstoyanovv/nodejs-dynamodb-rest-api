@@ -1,11 +1,11 @@
 "use strict";
 
 import { Request, Response } from "express"
-import { TokenService } from "../config/TokenService"
+import { TokenService } from "../services/TokenService"
 import { 
     STATUS_SUCCESS, 
     STATUS_ERROR, 
-    INTERNAL_SERVER_ERROR } from "../config/data"
+    INTERNAL_SERVER_ERROR } from "../constants/data"
 import { 
     ScanCommand  } from "@aws-sdk/lib-dynamodb";
 

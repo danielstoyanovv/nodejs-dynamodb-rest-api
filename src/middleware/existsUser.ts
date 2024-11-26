@@ -1,6 +1,6 @@
 "use strict";
 
-import { STATUS_ERROR } from "../config/data"
+import { STATUS_ERROR } from "../constants/data"
 import { 
      ScanCommand  } from "@aws-sdk/lib-dynamodb";
 import {

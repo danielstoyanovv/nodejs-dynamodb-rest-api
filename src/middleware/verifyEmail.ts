@@ -8,7 +8,7 @@ import {
      GetItemCommand } from "@aws-sdk/client-dynamodb";
 import {  
     ScanCommand  } from "@aws-sdk/lib-dynamodb";
-import { STATUS_ERROR } from "../config/data"
+import { STATUS_ERROR } from "../constants/data"
 import {config} from "dotenv"
 import { DynamoDBConnect } from "../config/DynamoDBConnect";
 

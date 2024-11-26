@@ -5,7 +5,7 @@ const bcrypt = require("bcrypt")
 import { 
     STATUS_SUCCESS, 
     STATUS_ERROR, 
-    INTERNAL_SERVER_ERROR } from "../config/data"
+    INTERNAL_SERVER_ERROR } from "../constants/data"
 import { 
     PutItemCommand, 
     GetItemCommand, 
