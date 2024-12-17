@@ -1,20 +1,20 @@
 "use strict";
 
 import {Request, Response, NextFunction } from "express";
-import { STATUS_SUCCESS } from "../constants/data"
+import {STATUS_SUCCESS} from "../constants/data"
 import {RedisServerService} from "../services/RedisServerService";
-export const addUsersToCacheMiddleware = async (req: Request, res: Response, next: NextFunction) => {
+
+export const getUserFromCacheMiddleware = async (req: Request, res: Response, next: NextFunction) => {
+    const { id } = req.params
+    const cacheKey = "user_" + id
     const redisClient = new RedisServerService().getRedisClient
-    const cachedData = await redisClient.get("users");
+    const cachedData = await redisClient.get(cacheKey);
     if (cachedData) {
-        const users = JSON.parse(cachedData)
+        const user = JSON.parse(cachedData)
         console.log('Cache hit');
         return res.status(200).json({
             status: STATUS_SUCCESS,
-            data: {
-                users,
-                "total" : users.length
-            },
+            data: user,
             message: ""
         })
     }

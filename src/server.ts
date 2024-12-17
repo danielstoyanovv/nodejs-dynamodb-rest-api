@@ -16,8 +16,8 @@ import cors from "cors";
 import { existsUserMiddleware } from "./middleware/existsUserMiddleware";
 import { verifyEmailMiddleware } from "./middleware/verifyEmailMiddleware";
 import {loginUser} from "./controllers/authenticationController";
-import {addUsersToCacheMiddleware} from "./middleware/addUsersToCacheMiddleware";
-import {addUserToCacheMiddleware} from "./middleware/addUserToCacheMiddleware";
+import {getUsersFromCacheMiddleware} from "./middleware/getUsersFromCacheMiddleware";
+import {getUserFromCacheMiddleware} from "./middleware/getUserFromCacheMiddleware";
 
 const app = express()
 
@@ -43,9 +43,9 @@ app.delete('/api/users/:id', VerifyTokenMiddleware, deleteUser)
 
 app.post('/api/login', validateUserRequestMiddleware, loginUser)
 
-app.get("/api/users", addUsersToCacheMiddleware, getUsers);
+app.get("/api/users", getUsersFromCacheMiddleware, getUsers);
 
-app.get('/api/users/:id', addUserToCacheMiddleware, getUser)
+app.get('/api/users/:id', getUserFromCacheMiddleware, getUser)
 app.listen(port, () => {
     console.log('listening on port', port)
 })
