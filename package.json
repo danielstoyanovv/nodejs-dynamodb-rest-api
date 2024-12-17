@@ -6,8 +6,8 @@
   "main": "./src/server.ts",
   "scripts": {
     "test": "jest",
-    "start": "node ./src/server.ts",
-    "dev": "nodemon ./src/server.ts"
+    "start": "node ./build/server.js",
+    "dev": "ts-node --files src/server.ts"
   },
   "keywords": [],
   "author": "",
@@ -24,7 +24,8 @@
     "esm": "^3.2.25",
     "express": "^4.19.2",
     "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.0.3"
+    "mongoose": "^8.0.3",
+    "redis": "^4.7.0"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",

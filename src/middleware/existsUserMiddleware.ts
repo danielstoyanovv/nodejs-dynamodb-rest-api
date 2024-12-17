@@ -15,7 +15,7 @@ const dynamoDBConnect = new ConnectToDatabase()
 const docClient = dynamoDBConnect.getDocumentClient
 const TABLE_NAME = process.env.DYNAMODB_USERS_TABLE_NAME
 
-export async function existsUser(req: Request, res: Response, next: NextFunction) {
+export async function existsUserMiddleware(req: Request, res: Response, next: NextFunction) {
     try {
         const email = req.body.email;
         const command = new ScanCommand({

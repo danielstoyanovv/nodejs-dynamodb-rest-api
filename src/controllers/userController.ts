@@ -15,23 +15,22 @@ import {
     ScanCommand  } from "@aws-sdk/lib-dynamodb";
 import { ConnectToDatabase } from "../config/ConnectToDatabase";
 const uuid = require('uuid');
-import { 
-    marshall, 
-    unmarshall } from "@aws-sdk/util-dynamodb";
+import {RedisServerService} from "../services/RedisServerService";
 import {config} from "dotenv"
 config()
 
 const dynamoDBConnect = new ConnectToDatabase()
 const docClient = dynamoDBConnect.getDocumentClient
 const TABLE_NAME = process.env.DYNAMODB_USERS_TABLE_NAME
+const redisClient = new RedisServerService().getRedisClient
 
 export const getUsers = async ( req: Request,  res: Response) => {
     try { 
         const command = new ScanCommand({
             TableName: TABLE_NAME,
           });
-
         const users = await docClient.send(command)
+        await redisClient.setEx("users", 600, JSON.stringify(users)); // Cache data for 10 minutes
         res.status(200).json({
             status: STATUS_SUCCESS, 
             data: {
@@ -66,6 +65,7 @@ export const createUser = async ( req: Request,  res: Response) => {
         });
         const response = await docClient.send(command);
         if (response) {
+            redisClient.del("users")
             const command = new GetItemCommand({
                 TableName: TABLE_NAME,
                 Key: {
@@ -100,6 +100,8 @@ export const getUser = async (req: Request, res: Response) => {
             },
           });
         const response = await docClient.send(command);
+        const cacheKey = "user_" + id
+        await redisClient.setEx(cacheKey, 600, JSON.stringify(response)); // Cache data for 10 minutes
         res.status(200).json({
             status: STATUS_SUCCESS, 
             data: response,
@@ -129,6 +131,9 @@ export const deleteUser = async (req: Request, res: Response) => {
             },
           });
           const response = await docClient.send(command);
+        await redisClient.del("users")
+        const cacheKey = "user_" + id
+        await redisClient.del(cacheKey)
         res.status(200).json({
             status: STATUS_SUCCESS,
             data: response,

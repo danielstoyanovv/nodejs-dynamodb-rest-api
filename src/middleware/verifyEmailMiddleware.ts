@@ -18,7 +18,7 @@ const dynamoDBConnect = new ConnectToDatabase()
 const docClient = dynamoDBConnect.getDocumentClient
 const TABLE_NAME = process.env.DYNAMODB_USERS_TABLE_NAME
 
-export const verifyEmail = async (req: Request, res: Response, next: NextFunction) => {
+export const verifyEmailMiddleware = async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params
     const { email } = req.body;
     const command = new GetItemCommand({
