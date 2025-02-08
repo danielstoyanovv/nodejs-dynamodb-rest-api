@@ -1,6 +1,9 @@
 "use strict";
 
-import { STATUS_ERROR } from "../constants/data"
+import {
+    MESSEGE_ERROR,
+    STATUS_BAD_REQUEST
+} from "../constants/data"
 import { 
      ScanCommand  } from "@aws-sdk/lib-dynamodb";
 import {
@@ -27,8 +30,8 @@ export async function existsUserMiddleware(req: Request, res: Response, next: Ne
         });
         const existsUser = await docClient.send(command) 
         if (existsUser.Count !== 0) {
-            return res.status(400).json({
-                status: STATUS_ERROR, 
+            return res.status(STATUS_BAD_REQUEST).json({
+                status: MESSEGE_ERROR,
                 data: [],
                 message: "User already exists"
             })        }

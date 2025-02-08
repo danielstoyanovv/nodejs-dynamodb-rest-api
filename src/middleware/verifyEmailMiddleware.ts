@@ -8,7 +8,10 @@ import {
      GetItemCommand } from "@aws-sdk/client-dynamodb";
 import {  
     ScanCommand  } from "@aws-sdk/lib-dynamodb";
-import { STATUS_ERROR } from "../constants/data"
+import {
+    MESSEGE_ERROR,
+    STATUS_BAD_REQUEST
+} from "../constants/data"
 import {config} from "dotenv"
 import { ConnectToDatabase } from "../config/ConnectToDatabase";
 
@@ -43,8 +46,8 @@ export const verifyEmailMiddleware = async (req: Request, res: Response, next: N
             });
             const existsUsers = await docClient.send(command)
             if (existsUsers.Count !== 0) {
-                return res.status(400).json({
-                    status: STATUS_ERROR, 
+                return res.status(STATUS_BAD_REQUEST).json({
+                    status: MESSEGE_ERROR,
                     data: [],
                     message: "User already exists" 
                 })

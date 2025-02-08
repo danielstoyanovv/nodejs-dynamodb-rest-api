@@ -2,10 +2,13 @@
 
 import { Request, Response } from "express"
 import { TokenService } from "../services/TokenService"
-import { 
-    STATUS_SUCCESS, 
-    STATUS_ERROR, 
-    INTERNAL_SERVER_ERROR } from "../constants/data"
+import {
+    MESSEGE_SUCCESS,
+    MESSEGE_ERROR,
+    MESSEGE_INTERNAL_SERVER_ERROR,
+    STATUS_INTERNAL_SERVER_ERROR,
+    STATUS_UNAUTHORIZED
+} from "../constants/data"
 import { 
     ScanCommand  } from "@aws-sdk/lib-dynamodb";
 
@@ -30,8 +33,8 @@ export const loginUser = async ( req: Request,  res: Response) => {
         });
         const users = await docClient.send(command)
         if (users.Count === 0) {
-            return res.status(401).json({ 
-                status: STATUS_ERROR, 
+            return res.status(STATUS_UNAUTHORIZED).json({
+                status: MESSEGE_ERROR,
                 data: [] ,
                 message: INVALID_EMAIL_PASSWORD 
             });
@@ -41,15 +44,15 @@ export const loginUser = async ( req: Request,  res: Response) => {
             users.Items.forEach(async function (user) {
                 const result = await bcrypt.compare(password, user.password);         
                 if (!result) {
-                    return res.status(401).json({ 
-                        status: STATUS_ERROR, 
+                    return res.status(STATUS_UNAUTHORIZED).json({
+                        status: MESSEGE_ERROR,
                         data: [],
                         message: INVALID_EMAIL_PASSWORD
                     });
                 }
                 if (user.role !== role) {
-                    return res.status(401).json({ 
-                        status: STATUS_ERROR, 
+                    return res.status(STATUS_UNAUTHORIZED).json({
+                        status: MESSEGE_ERROR,
                         data: [],
                         message: "Invalid role" 
                     });
@@ -60,10 +63,11 @@ export const loginUser = async ( req: Request,  res: Response) => {
                     .setUserRole(role)
                     .getToken
                 const data = {
+                    logged_user_id: user._id,
                     token: token
                 }
                 res.json({
-                    status: STATUS_SUCCESS, 
+                    status: MESSEGE_SUCCESS,
                     data,
                     message: ""
                 });
@@ -71,10 +75,10 @@ export const loginUser = async ( req: Request,  res: Response) => {
         }
     } catch (error) {
         console.error(error)
-        res.status(500).json({ 
-            status: STATUS_ERROR, 
+        res.status(STATUS_INTERNAL_SERVER_ERROR).json({
+            status: MESSEGE_ERROR,
             data: [],
-            message: INTERNAL_SERVER_ERROR
+            message: MESSEGE_INTERNAL_SERVER_ERROR
         });
     }
 }

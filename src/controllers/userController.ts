@@ -2,10 +2,16 @@
 
 import { Request, Response } from "express"
 const bcrypt = require("bcrypt")
-import { 
-    STATUS_SUCCESS, 
-    STATUS_ERROR, 
-    INTERNAL_SERVER_ERROR } from "../constants/data"
+import {
+    MESSEGE_SUCCESS,
+    MESSEGE_ERROR,
+    MESSEGE_INTERNAL_SERVER_ERROR,
+    STATUS_OK,
+    STATUS_PATCH,
+    STATUS_NO_CONTENT,
+    STATUS_CREATED,
+    STATUS_INTERNAL_SERVER_ERROR
+} from "../constants/data"
 import { 
     PutItemCommand, 
     GetItemCommand, 
@@ -19,6 +25,9 @@ import {RedisServerService} from "../services/RedisServerService";
 import {config} from "dotenv"
 config()
 
+const API_PREFIX = process.env.API_PREFIX || "api"
+const API_VERSION = process.env.API_VERSION || "v1"
+
 const dynamoDBConnect = new ConnectToDatabase()
 const docClient = dynamoDBConnect.getDocumentClient
 const TABLE_NAME = process.env.DYNAMODB_USERS_TABLE_NAME
@@ -31,8 +40,8 @@ export const getUsers = async ( req: Request,  res: Response) => {
           });
         const users = await docClient.send(command)
         await redisClient.setEx("users", 600, JSON.stringify(users)); // Cache data for 10 minutes
-        res.status(200).json({
-            status: STATUS_SUCCESS, 
+        res.status(STATUS_OK).json({
+            status: MESSEGE_SUCCESS,
             data: {
                users
             },
@@ -41,10 +50,10 @@ export const getUsers = async ( req: Request,  res: Response) => {
 
     } catch (error) {
         console.log(error)
-        res.status(500).json({ 
-            status: STATUS_ERROR, 
+        res.status(STATUS_INTERNAL_SERVER_ERROR).json({
+            status: MESSEGE_ERROR,
             data: [],
-            message: INTERNAL_SERVER_ERROR 
+            message: MESSEGE_INTERNAL_SERVER_ERROR
         });
     }
 }
@@ -73,8 +82,8 @@ export const createUser = async ( req: Request,  res: Response) => {
                 },
               });
             const response = await docClient.send(command);
-            res.status(201).json({ 
-                status: STATUS_SUCCESS, 
+            res.status(STATUS_CREATED).json({
+                status: MESSEGE_SUCCESS,
                 data: response,
                 message: "New user registered successfully" 
             });
@@ -82,10 +91,10 @@ export const createUser = async ( req: Request,  res: Response) => {
         }
     } catch (error) {
         console.error(error)
-        res.status(500).json({ 
-            status: STATUS_ERROR, 
+        res.status(STATUS_INTERNAL_SERVER_ERROR).json({
+            status: MESSEGE_ERROR,
             data: [],
-            message: INTERNAL_SERVER_ERROR 
+            message: MESSEGE_INTERNAL_SERVER_ERROR
         });
     }
 }
@@ -102,17 +111,17 @@ export const getUser = async (req: Request, res: Response) => {
         const response = await docClient.send(command);
         const cacheKey = "user_" + id
         await redisClient.setEx(cacheKey, 600, JSON.stringify(response)); // Cache data for 10 minutes
-        res.status(200).json({
-            status: STATUS_SUCCESS, 
+        res.status(STATUS_OK).json({
+            status: MESSEGE_SUCCESS,
             data: response,
             message: ""
         })
     } catch (error) {
         console.error(error)
-        return res.status(500).json({
-            status: STATUS_ERROR, 
+        return res.status(STATUS_INTERNAL_SERVER_ERROR).json({
+            status: MESSEGE_ERROR,
             data: [],
-            message: INTERNAL_SERVER_ERROR
+            message: MESSEGE_INTERNAL_SERVER_ERROR
         })
 
     }
@@ -129,21 +138,17 @@ export const deleteUser = async (req: Request, res: Response) => {
             Key: {
               id: { S: id },
             },
-          });
-          const response = await docClient.send(command);
+        });
+        const response = await docClient.send(command);
         await redisClient.del("users")
         const cacheKey = "user_" + id
         await redisClient.del(cacheKey)
-        res.status(200).json({
-            status: STATUS_SUCCESS,
-            data: response,
-            message: "User is deleted successfully"
-        })
+        res.status(STATUS_NO_CONTENT).send(); // No content response
     } catch (error) {
-        res.status(500).json({
-            status: STATUS_ERROR, 
+        res.status(STATUS_INTERNAL_SERVER_ERROR).json({
+            status: MESSEGE_ERROR,
             data: [],
-            message: INTERNAL_SERVER_ERROR
+            message: MESSEGE_INTERNAL_SERVER_ERROR
         })
 
     }
@@ -174,17 +179,17 @@ export const updateUser = async (req: Request, res: Response) => {
             // ReturnValues: "ALL_NEW",
         //   });
         // const response = await docClient.send(command);
-        res.status(200).json({
-            status: STATUS_SUCCESS, 
+        res.status(STATUS_PATCH).json({
+            status: MESSEGE_SUCCESS,
             data: 2,
             message: ""
         })
     } catch (error) {
         console.error(error)
-        res.status(500).json({
-            status: STATUS_ERROR, 
+        res.status(STATUS_INTERNAL_SERVER_ERROR).json({
+            status: MESSEGE_ERROR,
             data: [],
-            message: INTERNAL_SERVER_ERROR
+            message: MESSEGE_INTERNAL_SERVER_ERROR
         })
 
     }

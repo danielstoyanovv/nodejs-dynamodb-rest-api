@@ -1,7 +1,10 @@
 "use strict";
 
 import {Request, Response, NextFunction } from "express";
-import {STATUS_SUCCESS} from "../constants/data"
+import {
+    MESSEGE_SUCCESS,
+    STATUS_OK
+} from "../constants/data"
 import {RedisServerService} from "../services/RedisServerService";
 
 export const getUserFromCacheMiddleware = async (req: Request, res: Response, next: NextFunction) => {
@@ -12,8 +15,8 @@ export const getUserFromCacheMiddleware = async (req: Request, res: Response, ne
     if (cachedData) {
         const user = JSON.parse(cachedData)
         console.log('Cache hit');
-        return res.status(200).json({
-            status: STATUS_SUCCESS,
+        return res.status(STATUS_OK).json({
+            status: MESSEGE_SUCCESS,
             data: user,
             message: ""
         })
